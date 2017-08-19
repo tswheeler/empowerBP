@@ -1,14 +1,21 @@
 
 import UIKit
 import Parse
+import Foundation
+import Alamofire
 
 
-class LoginScreen: UIViewController,
+class Login: UIViewController,
 UITextFieldDelegate
 {
 
     /* Views */
-
+    @IBOutlet weak var containerScrollView: UIScrollView!
+    @IBOutlet weak var passwordText: UITextField!
+    @IBOutlet weak var usernameText: UITextField!
+    @IBOutlet weak var signupButton: UIButton!
+    @IBOutlet weak var forgotPasswordButton: UIButton!
+    @IBOutlet weak var loginButton: UIButton!
 
     
     
@@ -25,132 +32,95 @@ override func viewDidLoad() {
 
     
 // MARK: - LOGIN BUTTON
-@IBAction func loginButt(_ sender: AnyObject) {
+@IBAction func loginButton(_ sender: AnyObject) {
     passwordText.resignFirstResponder()
     showHUD()
+    getUserToken()
+    
+//Added
+    
+    ///THIS NEEDS TO BE IT'S OWN FUNCITON
+    
+//    var headers: HTTPHeaders = [
+//        "Accept": "application/json"
+//    ]
+//    
+//    let parameters = [
+//        "username" : self.usernameText.text!,
+//        "password" : self.passwordText.text!
+//    ]
+//    
+//    
+ //   if let authorizationHeader = Request.authorizationHeader(user: user, password: password) {
+ //       headers[authorizationHeader.key] = authorizationHeader.value
+//    }
+//    
+//    let url = "https://aabusharekh-4.cs.dal.ca:8443/api/v1/register"
+//    var statusCode: Int = 0
+//    Alamofire.request(.POST, url, parameters: parameters, encoding: .JSON).responseJSON{ response in
+//        
+//        switch response.result {
+//        case .success:
+//        print(response)
+//            return
+//        case .failure(let error):
+//            print(error)
+//        }}
+//    
+//End New
+    
+    
 
-    PFUser.logInWithUsername(inBackground: usernameText.text!, password:passwordTxt.text!) { (user, error) -> Void in
-        if error == nil {
-            _ = self.navigationController?.popViewController(animated: true)
+//    PFUser.logInWithUsername(inBackground: usernameText.text!, password:passwordText.text!) { (user, error) -> Void in
+//        if error == nil {
+//            _ = self.navigationController?.popViewController(animated: true)
+//            self.hideHUD()
+//            self.performSegue(withIdentifier: "toMainScene", sender: self)
+//            
+//        // Login failed. Try again or SignUp
+//        } else {
+//            self.simpleAlert("\(error!.localizedDescription)")
             self.hideHUD()
-            
-        // Login failed. Try again or SignUp
-        } else {
-            self.simpleAlert("\(error!.localizedDescription)")
-            self.hideHUD()
-    }}
+  //  }}
 }
 
+// CONFIRM USER AND GET TOKEN
     
-    
-    
-    
-    
-    
-// MARK: - FACEBOOK SIGNUP BUTTON
-@IBAction func facebookButt(_ sender: Any) {
-    // Set permissions required from the Facebook user account
-    let permissions = ["public_profile", "email"];
-    showHUD()
+    func getUserToken() {
         
-    // Login PFUser using Facebook
-    PFFacebookUtils.logInInBackground(withReadPermissions: permissions) { (user, error) in
-        if user == nil {
-            self.simpleAlert("Facebook login cancelled")
-            self.hideHUD()
-                
-        } else if (user!.isNew) {
-            print("NEW USER signed up and logged in through Facebook!");
-            self.getFBUserData()
+        
+        
+        let headers = [
+            "Authorization": "Bearer $TK"
+        ]
+        let parameters: Parameters = [
+            "username": usernameText.text!,
+            "password": passwordText.text!,
             
-        } else {
-            print("User logged in through Facebook!");
+        ]
+        Alamofire.request("https://aabusharekh-4.cs.dal.ca:8443/api/v1/authenticate", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            .responseJSON { response in
                 
-            _ = self.navigationController?.popViewController(animated: true)
-            self.hideHUD()
-    }}
-}
-    
-    
-func getFBUserData() {
-    let graphRequest = FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "id, name, email, picture.type(large)"])
-    let connection = FBSDKGraphRequestConnection()
-    connection.add(graphRequest) { (connection, result, error) in
-        if error == nil {
-            let userData:[String:AnyObject] = result as! [String : AnyObject]
-                
-            // Get data
-            let facebookID = userData["id"] as! String
-            let name = userData["name"] as! String
-            let email = userData["email"] as! String
-                
-            // Get avatar
-            let currUser = PFUser.current()!
-                
-            let pictureURL = URL(string: "https://graph.facebook.com/\(facebookID)/picture?type=large")
-            let urlRequest = URLRequest(url: pictureURL!)
-            let session = URLSession.shared
-            let dataTask = session.dataTask(with: urlRequest, completionHandler: { (data, response, error) in
-                if error == nil && data != nil {
-                    let image = UIImage(data: data!)
-                    let imageData = UIImageJPEGRepresentation(image!, 0.8)
-                    let imageFile = PFFile(name:"avatar.jpg", data:imageData!)
-                    currUser[USER_AVATAR] = imageFile
-                    currUser.saveInBackground(block: { (succ, error) in
-                        print("...AVATAR SAVED!")
-                        self.hideHUD()
-                        _ = self.navigationController?.popViewController(animated: true)
-                    })
-                } else {
-                    self.simpleAlert("\(error!.localizedDescription)")
+                switch response.result {
+                case .success:
+                    print(response)
                     self.hideHUD()
-            }})
-            dataTask.resume()
-                
-                
-            // Update user data
-            let nameArr = name.components(separatedBy: " ")
-            var username = String()
-            for word in nameArr {
-                username.append(word.lowercased())
-            }
-            currUser.username = username
-            currUser.email = email
-            currUser[USER_FULLNAME] = name
-            currUser.saveInBackground(block: { (succ, error) in
-                if error == nil {
-                    print("USER'S DATA UPDATED...")
-            }})
-            
-            
-        } else {
-            self.simpleAlert("\(error!.localizedDescription)")
-            self.hideHUD()
-    }}
-    connection.start()
-}
-    
-    
+                    return
+                case .failure(let error):
+                    print(response)
+                    self.simpleAlert("\(error.localizedDescription)")
+                    self.hideHUD()
+                    return
+                }}
+        
+    }
 
-    
-    
-    
-    
-    
-// MARK: - SIGNUP BUTTON
-@IBAction func signupButt(_ sender: AnyObject) {
-    let signupVC = self.storyboard?.instantiateViewController(withIdentifier: "Signup") as! Signup
-    navigationController?.pushViewController(signupVC, animated: true)
-}
-  
-    
-    
     
     
 // MARK: - TEXTFIELD DELEGATES
 func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-    if textField == usernameTxt { passwordTxt.becomeFirstResponder() }
-    if textField == passwordTxt  { passwordTxt.resignFirstResponder() }
+    if textField == usernameText { passwordText.becomeFirstResponder() }
+    if textField == passwordText  { passwordText.resignFirstResponder() }
     
 return true
 }
@@ -159,15 +129,15 @@ return true
 
 // MARK: - TAP THE VIEW TO DISMISS KEYBOARD
 @IBAction func tapToDismissKeyboard(_ sender: UITapGestureRecognizer) {
-    usernameTxt.resignFirstResponder()
-    passwordTxt.resignFirstResponder()
+    usernameText.resignFirstResponder()
+    passwordText.resignFirstResponder()
 }
     
     
     
 // MARK: - FORGOT PASSWORD BUTTON
-@IBAction func forgotPasswButt(_ sender: AnyObject) {
-    let alert = UIAlertController(title: APP_NAME,
+@IBAction func forgotPasswordButton(_ sender: AnyObject) {
+    let alert = UIAlertController(title: "EmpowerBP",
         message: "Type your email address you used to register.",
         preferredStyle: .alert)
     
@@ -193,7 +163,9 @@ return true
     alert.addAction(ok)
     alert.addAction(cancel)
     present(alert, animated: true, completion: nil)
+    
 }
+    
 
 
 

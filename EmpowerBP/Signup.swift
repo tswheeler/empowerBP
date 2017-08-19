@@ -1,102 +1,103 @@
-/* =======================
-
-- Classify -
-
-made by FV iMAGINATION ©2015
-for CodeCanyon
-
-==========================*/
-
-
 import UIKit
 import Parse
-
+import Alamofire
 
 class Signup: UIViewController,
 UITextFieldDelegate
 {
 
     /* Views */
-    @IBOutlet var containerScrollView: UIScrollView!
-    @IBOutlet var usernameTxt: UITextField!
-    @IBOutlet var passwordTxt: UITextField!
-    @IBOutlet var emailTxt: UITextField!
-    @IBOutlet var signupOutlet: UIButton!
-    @IBOutlet weak var touOutlet: UIButton!
-    
-    @IBOutlet var bkgViews: [UIView]!
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var subView: UIView!
+    @IBOutlet weak var logo: UIImageView!
+    @IBOutlet weak var firstnameText: UITextField!
+    @IBOutlet weak var lastnameText: UITextField!
+    @IBOutlet weak var usernameText: UITextField!
+    @IBOutlet weak var passwordText: UITextField!
+    @IBOutlet weak var passconfirmText: UITextField!
+    @IBOutlet weak var emailText: UITextField!
+    @IBOutlet weak var signupButton: UIButton!
+    @IBOutlet weak var loginButton: UIButton!
     
    
 
 override func viewDidLoad() {
         super.viewDidLoad()
-        
-    self.title = "SIGN UP"
-    
-    // Round views corners
-    signupOutlet.layer.cornerRadius = 5
-    touOutlet.layer.cornerRadius = 5
-    for view in bkgViews { view.layer.cornerRadius = 8 }
-    
-    
-    containerScrollView.contentSize = CGSize(width: containerScrollView.frame.size.width, height: 550)
+
 }
-    
+
 
 // MARK: - TAP TO DISMISS KEYBOARD
 @IBAction func tapToDismissKeyboard(_ sender: UITapGestureRecognizer) {
-    usernameTxt.resignFirstResponder()
-    passwordTxt.resignFirstResponder()
-    emailTxt.resignFirstResponder()
+    usernameText.resignFirstResponder()
+    passwordText.resignFirstResponder()
+    emailText.resignFirstResponder()
 }
  
     
     
 // MARK: - SIGNUP BUTTON
-@IBAction func signupButt(_ sender: AnyObject) {
-    if usernameTxt.text == "" || passwordTxt.text == "" || emailTxt.text == "" {
-        simpleAlert("You must fill all the fields to Sign Up!")
+@IBAction func signupButton(_ sender: AnyObject) {
+    
+    if firstnameText.text == ""||lastnameText.text == ""||usernameText.text == "" || passwordText.text == "" || emailText.text == "" {
+        simpleAlert("You must fill all the fields to sign Up.")
+        
+    } else if passwordText.text != passconfirmText.text {
+        simpleAlert("Your passwords must match.")
         
     } else {
         showHUD()
-        let userForSignUp = PFUser()
-        userForSignUp.username = usernameTxt.text
-        userForSignUp.password = passwordTxt.text
-        userForSignUp.email = emailTxt.text
-    
-        userForSignUp.signUpInBackground { (succeeded, error) -> Void in
-            if error == nil { // Successful Signup
-                _ = self.navigationController?.popToRootViewController(animated: true)
-                self.hideHUD()
-            
-            // error
-            } else {
-                self.simpleAlert("\(error!.localizedDescription)")
-                self.hideHUD()
-        }}
-    
+        createUserProfile()
+        self.hideHUD()
     }
 }
    
+// CREATE USER PROFILE
+    
+    func createUserProfile() {
+        
+        
+        
+        let headers = [
+            "Authorization": "Bearer $TK"
+        ]
+        let parameters: Parameters = [
+            "login": usernameText.text!,
+            "firstName": firstnameText.text!,
+            "lastName": lastnameText.text!,
+            "email": emailText.text!,
+            "password": passwordText.text!,
+            "phone": "9029690635"
+            
+        ]
+        Alamofire.request("https://aabusharekh-4.cs.dal.ca:8443/api/v1/register", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            .responseJSON { response in
+                switch response.result {
+                    case .success:
+                        print(response)
+                        self.hideHUD()
+                        return
+                    case .failure(let error):
+                        print(response)
+                        self.simpleAlert("\(error.localizedDescription)")
+                        self.hideHUD()
+                        return
+                    }}
+
+        }
     
     
 // MARK: - TEXTFIELD DELEGATES
 func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-    if textField == usernameTxt {   passwordTxt.becomeFirstResponder()  }
-    if textField == passwordTxt {  emailTxt.becomeFirstResponder()  }
-    if textField == emailTxt {   emailTxt.resignFirstResponder()   }
+    if textField == firstnameText {   lastnameText.becomeFirstResponder()  }
+    if textField == lastnameText {   usernameText.becomeFirstResponder()  }
+    if textField == usernameText {   passwordText.becomeFirstResponder()  }
+    if textField == passwordText {   passconfirmText.becomeFirstResponder()  }
+    if textField == passconfirmText {  emailText.becomeFirstResponder()  }
+    if textField == emailText {   emailText.resignFirstResponder()   }
         
 return true
 }
-
-
-    
-// MARK: - TERMS OF USE BUTTON
-@IBAction func touButt(_ sender: AnyObject) {
-    let touVC = self.storyboard?.instantiateViewController(withIdentifier: "TermsOfUse") as! TermsOfUse
-    present(touVC, animated: true, completion: nil)
-}
-    
     
     
 

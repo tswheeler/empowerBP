@@ -1,213 +1,68 @@
-//import UIKit
-//import Parse
-//import MapKit
-//import GoogleMobileAds
-//import AudioToolbox
-//import MessageUI
+import UIKit
+import Parse
+
+
+class ShowSingleInt: UIViewController,
+UIAlertViewDelegate,
+UIScrollViewDelegate,
+UITextFieldDelegate
+
+{
+
+/* Views */
+    @IBOutlet var mainView: UIView!
+    @IBOutlet weak var mainStack: UIStackView!
+    @IBOutlet weak var infoStack: UIStackView!
+    @IBOutlet weak var intName: UILabel!
+    @IBOutlet weak var intText: UILabel!
+    @IBOutlet weak var linkButton: UIButton!
+    @IBOutlet weak var noteButton: UIButton!
+    @IBOutlet weak var editStack: UIStackView!
+    @IBOutlet weak var completeButton: UIButton!
+    @IBOutlet weak var favButton: UIButton!
+
+    
+    
+/* Variables */
+    var singleIntObj = PFObject(className: INT_CLASS_NAME)
+    var postTitle = ""
+    
+
+    
+    
+    
+    
+
+    
+override func viewDidLoad() {
+        super.viewDidLoad()
+    
+
+    showIntDetails()
+
+    // Reset variables for Reply
+    postTitle = ""
+    
+}
+
+    
+    
+    
+    
+// MARK: - SHOW DETAILS
+func showIntDetails() {
+    
+    // Get Title
+    intName.text = "\(singleIntObj[INT_RESOURCE_TITLE]!)"
+    self.title = "\(singleIntObj[INT_RESOURCE_TITLE]!)"
+    
+
+    // Get Description
+    intText.text = "\(singleIntObj[INT_TEXT]!)"
+}
+    
+    
 //
-//
-//class ShowSingleAd: UIViewController,
-//UIAlertViewDelegate,
-//UIScrollViewDelegate,
-//UITextFieldDelegate,
-//GADInterstitialDelegate,
-//MFMailComposeViewControllerDelegate,
-//MKMapViewDelegate
-//{
-//
-//    /* Views */
-//    @IBOutlet var containerScrollView: UIScrollView!
-//    @IBOutlet var adTitleLabel: UILabel!
-//    
-//    @IBOutlet var imagesScrollView: UIScrollView!
-//    @IBOutlet var pageControl: UIPageControl!
-//    @IBOutlet var image1: UIImageView!
-//    @IBOutlet var image2: UIImageView!
-//    @IBOutlet var image3: UIImageView!
-//    
-//    @IBOutlet var priceLabel: UILabel!
-//    @IBOutlet var adDescrTxt: UITextView!
-//    @IBOutlet var addressLabel: UILabel!
-//    @IBOutlet var usernameLabel: UILabel!
-//    @IBOutlet weak var websiteOutlet: UIButton!
-//    
-//    @IBOutlet var mapView: MKMapView!
-//    
-//    @IBOutlet var messageTxt: UITextView!
-//    @IBOutlet var nameTxt: UITextField!
-//    @IBOutlet var emailTxt: UITextField!
-//    @IBOutlet var phoneTxt: UITextField!
-//    
-//    @IBOutlet var sendOutlet: UIButton!
-//    @IBOutlet weak var phoneCallOutlet: UIButton!
-//    var reportButt = UIButton()
-//
-//    // For image Preview
-//    @IBOutlet weak var imgButt1: UIButton!
-//    @IBOutlet weak var imgButt2: UIButton!
-//    @IBOutlet weak var imgButt3: UIButton!
-//
-//    @IBOutlet var imagePreviewView: UIView!
-//    @IBOutlet var imgScrollView: UIScrollView!
-//    @IBOutlet var imgPrev: UIImageView!
-//    @IBOutlet weak var instructionsLabel: UILabel!
-//
-//    
-//    var adMobInterstitial: GADInterstitial!
-//    
-//    
-//    
-//    
-//    /* Variables */
-//    var singleAdObj = PFObject(className: CLASSIF_CLASS_NAME)
-//    
-//    var receiverEmail = ""
-//    var postTitle = ""
-//    
-//    var annotation:MKAnnotation!
-//    var localSearchRequest:MKLocalSearchRequest!
-//    var localSearch:MKLocalSearch!
-//    var localSearchResponse:MKLocalSearchResponse!
-//    var error:NSError!
-//    var pointAnnotation:MKPointAnnotation!
-//    var pinView:MKPinAnnotationView!
-//    var region: MKCoordinateRegion!
-//    
-//
-//    
-//    
-//    
-//    
-//
-//    
-//override func viewDidLoad() {
-//        super.viewDidLoad()
-//    
-//
-//    showAdDetails()
-//    
-//    
-//    // Initialize a Report Button
-//    reportButt = UIButton(type: UIButtonType.custom)
-//    reportButt.adjustsImageWhenHighlighted = false
-//    reportButt.frame = CGRect(x: 0, y: 0, width: 44, height: 44)
-//    reportButt.setBackgroundImage(UIImage(named: "reportButt"), for: UIControlState())
-//    reportButt.addTarget(self, action: #selector(reportButton(_:)), for: UIControlEvents.touchUpInside)
-//    navigationItem.rightBarButtonItem = UIBarButtonItem(customView: reportButt)
-//    
-//    
-//    // Init AdMob interstitial
-//    let delayTime = DispatchTime.now() + Double(Int64(5 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-//    adMobInterstitial = GADInterstitial(adUnitID: ADMOB_UNIT_ID)
-//    adMobInterstitial.load(GADRequest())
-//    DispatchQueue.main.asyncAfter(deadline: delayTime) {
-//        self.showInterstitial()
-//    }
-//    
-//    
-//    // Reset variables for Reply
-//    receiverEmail = ""
-//    postTitle = ""
-//    
-//    
-//    // Setup container ScrollView
-//    containerScrollView.contentSize = CGSize(width: containerScrollView.frame.size.width, height: 1500)
-//    
-//    
-//    
-//    // Setup images ScrollView and their buttons
-//    // imagesScrollView.frame = CGRect(x: 0, y: 77, width: view.frame.size.width, height: 180)
-//    imagesScrollView.contentSize = CGSize(width: imagesScrollView.frame.size.width * 3,
-//                                          height: imagesScrollView.frame.size.height)
-//    
-//    image1.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: 180)
-//    image2.frame = CGRect(x: view.frame.size.width, y: 0, width: view.frame.size.width, height: 180)
-//    image3.frame = CGRect(x: view.frame.size.width*2, y: 0, width: view.frame.size.width, height: 180)
-//    
-//    imgButt1.frame = image1.frame
-//    imgButt2.frame = image2.frame
-//    imgButt3.frame = image3.frame
-//
-//    
-//    imagePreviewView.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-//    instructionsLabel.isHidden = true
-//    imgPrev.frame = imgScrollView.frame
-//    
-//    // Round views corners
-//    sendOutlet.layer.cornerRadius = 8
-//    phoneCallOutlet.layer.cornerRadius = 8
-//
-//}
-//    
-//    
-//    
-//    
-//    
-//// MARK: - SHOW AD DETAILS
-//func showAdDetails() {
-//    
-//    // Get Ad Title
-//    adTitleLabel.text = "\(singleAdObj[CLASSIF_TITLE]!)"
-//    self.title = "\(singleAdObj[CLASSIF_TITLE]!)"
-//    
-//     // Get image1
-//    let imageFile1 = singleAdObj[CLASSIF_IMAGE1] as? PFFile
-//    imageFile1?.getDataInBackground (block: { (imageData, error) -> Void in
-//        if error == nil {
-//            if let imageData = imageData {
-//                self.image1.image = UIImage(data:imageData)
-//                self.pageControl.numberOfPages = 1
-//    }}})
-//    
-//    // Get image2
-//    let imageFile2 = singleAdObj[CLASSIF_IMAGE2] as? PFFile
-//    imageFile2?.getDataInBackground (block: { (imageData, error) -> Void in
-//        if error == nil {
-//            if let imageData = imageData {
-//                self.image2.image = UIImage(data:imageData)
-//                self.pageControl.numberOfPages = 2
-//    }}})
-//    
-//    // Get image3
-//    let imageFile3 = singleAdObj[CLASSIF_IMAGE3] as? PFFile
-//    imageFile3?.getDataInBackground (block: { (imageData, error) -> Void in
-//        if error == nil {
-//            if let imageData = imageData {
-//                self.image3.image = UIImage(data:imageData)
-//                self.pageControl.numberOfPages = 3
-//    }}})
-//    
-//    // Get Ad Price
-//    priceLabel.text = "\(singleAdObj[CLASSIF_PRICE]!)"
-//    
-//    // Get Ad Description
-//    adDescrTxt.text = "\(singleAdObj[CLASSIF_DESCRIPTION]!)"
-//    
-//    // Get Ad Address
-//    addressLabel.text = "\(singleAdObj[CLASSIF_ADDRESS_STRING]!)"
-//    addPinOnMap(addressLabel.text!)
-//
-//    
-//    // Get User Pointer
-//    let userPointer = singleAdObj[CLASSIF_USER] as! PFUser
-//    userPointer.fetchIfNeededInBackground { (user, error) in
-//        if error == nil {
-//            self.usernameLabel.text = userPointer.username!
-//    
-//            // Check if user has provided a website
-//            if userPointer[USER_WEBSITE] != nil { self.websiteOutlet.setTitle("\(userPointer[USER_WEBSITE]!)", for: UIControlState())
-//            } else { self.websiteOutlet.setTitle("N/D", for: UIControlState()) }
-//    
-//            // Check if the user has provided a phone number
-//            if userPointer[USER_PHONE] == nil { self.phoneCallOutlet.isHidden = true
-//            } else { self.phoneCallOutlet.isHidden = false }
-//            
-//        } else { self.simpleAlert("\(error!.localizedDescription)")
-//    }}
-//}
-//    
-//    
-//    
 //// OPEN SELLER'S WEBSITE (IF IT EXISTS)
 //@IBAction func websiteButt(_ sender: AnyObject) {
 //    let butt = sender as! UIButton
@@ -494,12 +349,12 @@
 //func viewForZooming(in scrollView: UIScrollView) -> UIView? {
 //    return imgPrev
 //}
-//    
-//    
-//    
-//    
-//    
-//override func didReceiveMemoryWarning() {
-//        super.didReceiveMemoryWarning()
-//    }
-//}
+    
+    
+    
+    
+    
+override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+}
