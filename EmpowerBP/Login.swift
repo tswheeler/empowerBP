@@ -31,90 +31,36 @@ override func viewDidLoad() {
 }
 
     
-// MARK: - LOGIN BUTTON
+// MARK: - LOGIN BUTTON (Confirm User and Get Token)
 @IBAction func loginButton(_ sender: AnyObject) {
     passwordText.resignFirstResponder()
     showHUD()
-    getUserToken()
     
-//Added
-    
-    ///THIS NEEDS TO BE IT'S OWN FUNCITON
-    
-//    var headers: HTTPHeaders = [
-//        "Accept": "application/json"
-//    ]
-//    
-//    let parameters = [
-//        "username" : self.usernameText.text!,
-//        "password" : self.passwordText.text!
-//    ]
-//    
-//    
- //   if let authorizationHeader = Request.authorizationHeader(user: user, password: password) {
- //       headers[authorizationHeader.key] = authorizationHeader.value
-//    }
-//    
-//    let url = "https://aabusharekh-4.cs.dal.ca:8443/api/v1/register"
-//    var statusCode: Int = 0
-//    Alamofire.request(.POST, url, parameters: parameters, encoding: .JSON).responseJSON{ response in
-//        
-//        switch response.result {
-//        case .success:
-//        print(response)
-//            return
-//        case .failure(let error):
-//            print(error)
-//        }}
-//    
-//End New
-    
-    
-
-//    PFUser.logInWithUsername(inBackground: usernameText.text!, password:passwordText.text!) { (user, error) -> Void in
-//        if error == nil {
-//            _ = self.navigationController?.popViewController(animated: true)
-//            self.hideHUD()
-//            self.performSegue(withIdentifier: "toMainScene", sender: self)
-//            
-//        // Login failed. Try again or SignUp
-//        } else {
-//            self.simpleAlert("\(error!.localizedDescription)")
-            self.hideHUD()
-  //  }}
-}
-
-// CONFIRM USER AND GET TOKEN
-    
-    func getUserToken() {
+    let headers = [
+        "Authorization": "Bearer $TK"
+    ]
+    let parameters: Parameters = [
+        "username": usernameText.text!,
+        "password": passwordText.text!,
         
-        
-        
-        let headers = [
-            "Authorization": "Bearer $TK"
         ]
-        let parameters: Parameters = [
-            "username": usernameText.text!,
-            "password": passwordText.text!,
+    Alamofire.request("https://aabusharekh-4.cs.dal.ca:8443/api/v1/authenticate", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        .validate()
+        .responseJSON { response in
             
-        ]
-        Alamofire.request("https://aabusharekh-4.cs.dal.ca:8443/api/v1/authenticate", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            .responseJSON { response in
-                
-                switch response.result {
-                case .success:
-                    print(response)
-                    self.hideHUD()
-                    return
-                case .failure(let error):
-                    print(response)
-                    self.simpleAlert("\(error.localizedDescription)")
-                    self.hideHUD()
-                    return
-                }}
-        
+            switch response.result {
+            case .success:
+                print(response)
+                self.performSegue(withIdentifier: "toMainScene", sender: self)
+                self.hideHUD()
+                return
+            case .failure(let error):
+                print(response)
+                self.simpleAlert("\(error.localizedDescription)")
+                self.hideHUD()
+                return
+            }}
     }
-
     
     
 // MARK: - TEXTFIELD DELEGATES

@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "06B5ECFF502555F81F54D624012391A3C42B3D77",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "06B5ECFF502555F81F54D624012391A3C42B3D77" : 9223372036854775807,
+    "66F78A6A4C579B00EFAEEC8D61C307E8DDAF74FF" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "D3206965-5BA1-4CD9-A5A7-C6F1E3C43E5B",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "06B5ECFF502555F81F54D624012391A3C42B3D77" : "EmpowerBP\/",
+    "66F78A6A4C579B00EFAEEC8D61C307E8DDAF74FF" : "EmpowerBP\/sb-rest-jwt\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "EmpowerBP",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "EmpowerBP.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/tswheeler\/empowerBP.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "06B5ECFF502555F81F54D624012391A3C42B3D77"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/aabusharekh\/sb-rest-jwt.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "66F78A6A4C579B00EFAEEC8D61C307E8DDAF74FF"
+    }
+  ]
+}

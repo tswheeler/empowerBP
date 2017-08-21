@@ -71,11 +71,13 @@ override func viewDidLoad() {
             
         ]
         Alamofire.request("https://aabusharekh-4.cs.dal.ca:8443/api/v1/register", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            .validate()
             .responseJSON { response in
                 switch response.result {
                     case .success:
                         print(response)
                         self.hideHUD()
+                        self.performSegue(withIdentifier: "toMainScene", sender: self)
                         return
                     case .failure(let error):
                         print(response)
